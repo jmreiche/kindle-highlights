@@ -13,6 +13,15 @@ namespace kindle_highlight_app.Controllers
         [HttpPost]
         public async Task<FileContent> UploadFile([FromForm] FileUpload fileUpload)
         {
+            // 
+            if (!fileUpload.File.FileName.EndsWith(".txt"))
+                return new FileContent() { Failed = true, ErrorMessage = "Invalid file format"};
+
+            // If file is larger than 10MB then we will reject it
+            // arbitrarily chosen to have a starting point
+            if(fileUpload.File.Length > 10000000)
+                return new FileContent() { Failed = true, ErrorMessage = "File size too large"};
+
             return await Task.Run(() =>
             {
                 Dictionary<string, SortedDictionary<string, List<string>>> result = new Dictionary<string, SortedDictionary<string, List<string>>>();
@@ -32,8 +41,8 @@ namespace kindle_highlight_app.Controllers
                             {
                                 // Book title
                                 case 0:
-                                    bookTitle = line;
-                                    if (result.ContainsKey(line) == false)
+                                    bookTitle = line.Trim();
+                                    if (result.ContainsKey(bookTitle) == false)
                                     {
                                         result.Add(bookTitle, new SortedDictionary<string, List<string>>());
                                     }
@@ -47,7 +56,10 @@ namespace kindle_highlight_app.Controllers
                                         // Find actual location after word "location"
                                         if (word.Equals("location"))
                                         {
-                                            location = stringArray[i + 1];
+                                            // Now split location to get the first number to sort
+                                            // They come in this format: 999-1002
+                                            var locationArray  = stringArray[i + 1].Split("-");
+                                            location = locationArray[0];
                                         }
                                     }
                                     break;

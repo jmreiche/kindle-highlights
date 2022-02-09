@@ -24,7 +24,6 @@ export class UploadFile extends Component {
       body: data,
     })
       .then(async (response) => {
-        this.setState({ msg: "File successfully uploaded" });
         if (!response.ok) {
           console.log(
             "Response from addTrainingProgram not OK: ",
@@ -59,8 +58,12 @@ export class UploadFile extends Component {
     ));
     return (
       <div id="container">
-        <h1>File Upload Example using React</h1>
-        <h3>Upload a File</h3>
+        <h1>Upload your My Clippings.txt file</h1>
+        <ol>
+          <li>Plug in your Kindle and the file will usually be found under /Kindle/documents/</li>
+          <li>Press the "Browse" button below find the file and then press "Upload"</li>
+          <li>Select the book or pdf from the dropdown to see all highlights</li>
+        </ol>
         <h4>{this.state.msg}</h4>
         <input onChange={this.onFileChange} type="file"></input>
         <button disabled={!this.state.file} onClick={this.uploadFileData}>
@@ -71,12 +74,12 @@ export class UploadFile extends Component {
         {this.state.highlights
           ? this.state.highlights.map((highlight, index) => (
               <div key={index}>
-                <h5>Location: {highlight[0]}</h5>
-                <q>{highlight[1]}</q>
+                {/* <h5>Location: {highlight[0]}</h5> */}
+                <blockquote>{highlight[1]}</blockquote>
               </div>
             ))
           : null}
       </div>
     );
   }
-}
+} 
